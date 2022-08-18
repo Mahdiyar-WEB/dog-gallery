@@ -1,21 +1,21 @@
 import axios from "axios";
 import { FC, useEffect, useState } from "react";
 import styles from "./galleryItem.module.css";
-import {AiOutlineHeart,AiFillHeart} from 'react-icons/ai';
+import { AiOutlineHeart, AiFillHeart } from "react-icons/ai";
 
 interface IImages {
   url: string;
   error: string;
 }
 interface IPorps {
-  url?: any;
+  urlProp?: any;
 }
 
-const GalleryItem: FC<IPorps> = ({ url }) => {
+const GalleryItem: FC<IPorps> = ({ urlProp }) => {
   const [imageURL, setImageURL] = useState<IImages>({ url: "", error: "" });
   const [isLiked, setIsLiked] = useState(false);
 
-  const activeURL = url || imageURL.url;
+  const activeURL = urlProp || imageURL.url;
 
   const fetchImage = async () => {
     await axios
@@ -28,41 +28,55 @@ const GalleryItem: FC<IPorps> = ({ url }) => {
       });
   };
 
-  const checkImage = (url: string) => {
+  const checkImageFormat = (url: string) => {
     if (url.endsWith(".mp4") || url.endsWith(".gif") || url.endsWith(".webm")) {
       fetchImage();
     } else {
-      return <img src={url} className={styles.image} />;
+      return (
+        <img onDoubleClick={handleLike} src={url} className={styles.image} />
+      );
     }
   };
 
-  const handleLike = ()=>{
+  const handleLike = () => {
     // @ts-ignore
-    const clonedFavorites = JSON.parse(localStorage.getItem("favorites")) || []; 
-    if(!isLiked){
-      localStorage.setItem("favorites",JSON.stringify([...clonedFavorites,activeURL]));
+    const clonedFavorites = JSON.parse(localStorage.getItem("favorites")) || [];
+    
+    if (!isLiked ) {
+      localStorage.setItem(
+        "favorites",
+        JSON.stringify([...clonedFavorites, activeURL])
+      );
       setIsLiked(true);
-    }else{
-      const filteredFavorites = clonedFavorites.filter((item:string)=> item !== activeURL);
-      localStorage.setItem("favorites",JSON.stringify([...filteredFavorites]));
+    } else {
+      const filteredFavorites = clonedFavorites.filter(
+        (item: string) => item !== activeURL
+      );
+      localStorage.setItem("favorites", JSON.stringify([...filteredFavorites]));
       setIsLiked(false);
     }
-  }
+  };
 
   useEffect(() => {
-    if (!imageURL.url && !url) {
+    if (!imageURL.url && !urlProp) {
       fetchImage();
     }
   }, []);
 
+  useEffect(() => {
+    urlProp && setIsLiked(true);
+  }, []);
+
   return (
-    <div className={styles.imageContainer}>
-      {imageURL.error && <p className="bg-danger text-white">{imageURL.error}</p>}
-      {checkImage(activeURL)}
-      <button onClick={()=> handleLike()} className={styles.like}>
-        {isLiked? <AiFillHeart size={25}/> : <AiOutlineHeart size={25}/>}
+    <section className={styles.imageContainer}>
+      {imageURL.error && (
+        <p className="bg-danger text-white">{imageURL.error}</p>
+      )}
+      {checkImageFormat(activeURL)}
+      <button onClick={handleLike} className={styles.like}>
+        {isLiked ? <AiFillHeart size={25} /> : <AiOutlineHeart size={25} />}
       </button>
-    </div>
+    </section>
   );
 };
 export default GalleryItem;

@@ -13,12 +13,12 @@
 .container button:focus{
    box-shadow: none ;
 }
-.container div:nth-child(1){
-    grid-column: 1 / span 2;
+.container section:nth-child(1){
+    grid-column: 1 / span 2 ;
 }
 
 @media screen and (max-width:992px) {
-    .container div:nth-child(1){
+    .container section:nth-child(1){
         grid-column: 1 / span 1;
     }
 }
