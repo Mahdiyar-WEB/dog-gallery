@@ -1,6 +1,6 @@
 import { lazy, Suspense, useState } from "react";
 import styles from "./home.module.css";
-import loading from "../../assets/loading.svg"
+import loading from "../../assets/loading.svg";
 const GalleryItem = lazy(
   () => import("../../components/GalleryItem/GalleryItem")
 );
@@ -14,8 +14,17 @@ const Home = () => {
     <main className={styles.container}>
       {elements.map((element) => {
         return (
-          <Suspense key={element} fallback={<img src={loading} />}>
-            <GalleryItem  />
+          <Suspense
+            key={element}
+            fallback={
+              <div
+                className="d-flex w-100 h-100 justify-content-center align-items-center"
+              >
+                <img src={loading} />
+              </div>
+            }
+          >
+            <GalleryItem />
           </Suspense>
         );
       })}
